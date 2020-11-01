@@ -118,10 +118,7 @@ def get_metrics_table(path_to_preds, path_to_true, norm=255.0):
     
         metrics = metrics.append(temp_metrics, ignore_index=True)
     
-    #metrics = metrics.drop(columns=["95% CI", "P-Value", "Kappa 95% CI", "Overall J", "SOA4(Cicchetti)", "SOA1(Landis & Koch)", "SOA2(Fleiss)", "SOA3(Altman)", "SOA4(Cicchetti)", "SOA5(Cramer)", "SOA6(Matthews)", "Zero-one Loss", "Chi-Squared DF", "RR", "Lambda B", "Overall MCEN"])
     metrics = metrics[["name", "ACC Macro", "Bangdiwala B", "Bennett S", "Conditional Entropy", "Cross Entropy", "F1 Micro", "FNR Micro", "FPR Micro", "Gwet AC1","Hamming Loss", "Joint Entropy", "Kappa No Prevalence", "Mutual Information", "NIR", "Overall ACC", "Overall RACC", "Overall RACCU", "PPV Micro", "Reference Entropy", "Response Entropy", "Standard Error", "TNR Micro", "TPR Micro"]]
-    
-    #metrics = metrics.replace(to_replace='None', value=np.nan).dropna(axis="columns")
     
     metrics = metrics.set_index("name")
     return metrics
@@ -163,25 +160,25 @@ def predict(metrics, path_to_weights):
 
 #Получение метрик
 # Sample_1
-#metrics = get_metrics_table("C:/Devs/medhack/Dataset/sample_1", "C:/Devs/medhack/Dataset/Expert", norm=255.0)
+#metrics = get_metrics_table("<путь до папки>/Dataset/sample_1", "<путь до папки>/Expert", norm=255.0)
 #print(len(metrics.columns))
-#metrics.to_csv("C:/Devs/medhack/test_1.csv", index=True)
+#metrics.to_csv("<путь до папки>/test_1.csv", index=True)
 #print("Метрики для 1 ИНС посчитаны")
 
 # Sample_2
-#metrics = get_metrics_table("C:/Devs/medhack/Dataset/sample_2", "C:/Devs/medhack/Dataset/Expert", norm=255.0)
+#metrics = get_metrics_table("<путь до папки>/Dataset/sample_2", "<путь до папки>/Expert", norm=255.0)
 #metrics.to_csv("C:/Devs/medhack/test_2.csv")
 #print("Метрики для 2 ИНС посчитаны")
 
 # Sample_3
-#metrics = get_metrics_table("C:/Devs/medhack/Dataset/sample_3", "C:/Devs/medhack/Dataset/Expert", norm=255.0)
-#metrics.to_csv("C:/Devs/medhack/test_3.csv")
+#metrics = get_metrics_table("<путь до папки>/Dataset/sample_3", "<путь до папки>/Expert", norm=255.0)
+#metrics.to_csv("<путь до папки>/test_3.csv")
 #print("Метрики для 3 ИНС посчитаны")
 
 # Загружаем локальные метрики для проверки ошибки обучения
-#metrics = pd.read_csv("C:/Devs/medhack/test_3.csv")
+#metrics = pd.read_csv("<путь до папки>/test_3.csv")
 #metrics = metrics.set_index("name")
-open_part = pd.read_csv("C:/Devs/medhack/Dataset/OpenPart.csv")
+open_part = pd.read_csv("<путь до папки>/OpenPart.csv")
 #f = [x.split("_")[0] + "_" + x.split("_")[1].split(".")[0] for x in list(open_part.Case.values)]
 #expert_index = list(set(metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]) & set(f))
 #metrics.index = metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]
@@ -199,10 +196,10 @@ open_part = open_part.sort_index()
 
 
 for i in range(1, 4):
-    metrics = pd.read_csv(f"C:/Devs/medhack/data_{i}.csv")
+    metrics = pd.read_csv(f"<путь до папки>/data_{i}.csv")
     metrics = metrics.set_index("name")
 
-    result, grads = predict(metrics[metrics.columns[:-5]], "C:/Devs/medhack/p_23.npy")
+    result, grads = predict(metrics[metrics.columns[:-5]], "<путь до папки>/p_23.npy")
 
     expert_mark = open_part[f"Sample {i}"].values
 
@@ -217,28 +214,28 @@ print("\n\n")
 
 # Загружаем локальные метрики (для теста) и предсказываем / отсекаем размеченные данные
 
-metrics = pd.read_csv("C:/Devs/medhack/test_1.csv")
+metrics = pd.read_csv("<путь до папки>/test_1.csv")
 metrics = metrics.set_index("name")
-open_part = pd.read_csv("C:/Devs/medhack/Dataset/OpenPart.csv")
+open_part = pd.read_csv("<путь до папки>/OpenPart.csv")
 f = [x.split("_")[0] + "_" + x.split("_")[1].split(".")[0] for x in list(open_part.Case.values)]
 expert_index = list(set(metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]) & set(f))
 metrics.index = metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]
 metrics = metrics[~metrics.index.isin(expert_index)]
 metrics = metrics.sort_index()
-main_result, grads = predict(metrics, "C:/Devs/medhack/p_23.npy")
+main_result, grads = predict(metrics, "<путь до папки>/p_23.npy")
 main_result = main_result.to_frame().rename(columns={"pred":"Sample 1"})
 
 for i in range(2, 4):
-    metrics = pd.read_csv(f"C:/Devs/medhack/test_{i}.csv")
+    metrics = pd.read_csv(f"<путь до папки>/test_{i}.csv")
     metrics = metrics.set_index("name")
-    open_part = pd.read_csv(f"C:/Devs/medhack/Dataset/OpenPart.csv")
+    open_part = pd.read_csv(f"<путь до папки>/OpenPart.csv")
     f = [x.split("_")[0] + "_" + x.split("_")[1].split(".")[0] for x in list(open_part.Case.values)]
     expert_index = list(set(metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]) & set(f))
     metrics.index = metrics.index.str.split("_").str[0] + "_" + metrics.index.str.split("_").str[1]
     metrics = metrics[~metrics.index.isin(expert_index)]
     metrics = metrics.sort_index()
 
-    result, grads = predict(metrics, "C:/Devs/medhack/p_23.npy")
+    result, grads = predict(metrics, "<путь до папки>/p_23.npy")
     main_result = main_result.merge(result.to_frame().rename(columns={"pred":f"Sample {i}"}), left_index=True, right_index=True)
     
-main_result.to_csv("result.csv")
+main_result.to_csv("<путь до папки>/result.csv")
